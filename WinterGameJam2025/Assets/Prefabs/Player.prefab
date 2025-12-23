@@ -108,7 +108,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0.3
+  m_LinearDamping: 3
   m_AngularDamping: 999
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: a4be9efbe499b624caf497d3676add10, type: 2}
@@ -296,3 +296,5 @@ MonoBehaviour:
   velocityMultiplier: 6
   maxVelocity: 15
   lineLengthMultiplier: 0.25
+  penguinHasMoved: 0
+  isActiveTurn: 0

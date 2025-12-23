@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TurnManager : MonoBehaviour
 {
@@ -14,6 +15,24 @@ public class TurnManager : MonoBehaviour
     void Start()
     {
         StartTurn();
+    }
+
+    void Awake()
+    {
+        instance = this;
+    }
+
+    void Update()
+    {
+        if (currentTeamIndex != 1)
+            return;     
+        if (Keyboard.current == null)
+            return;
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Debug.Log("Enemy Turn Forcefully ended!");
+            ForceEnemyTurnEnd();
+        }
     }
 
     public void CheckTurn(PlayerFlinger2D penguin)
@@ -48,16 +67,9 @@ public class TurnManager : MonoBehaviour
             penguin.isActiveTurn = true;
         }
 
-        if (currentTeamIndex == 1 && Input.GetKey(KeyCode.Space))
+        if (currentTeamIndex == 1)
         {
-
-            foreach (var penguin in currentTeam)
-            {
-                penguin.penguinHasMoved = true;
-                penguin.isActiveTurn = false;
-                
-            }
-            EndTurn();
+           //TODO: Enemy AI
         }
 
         
@@ -68,7 +80,7 @@ public class TurnManager : MonoBehaviour
         Debug.Log("End Turn For Team " + currentTeamIndex);
         foreach (var penguin in GetCurrentTeam())
         {
-            penguin.isActiveTurn=false;
+            penguin.isActiveTurn = false;
             
         }
         currentTeamIndex = 1 - currentTeamIndex;
@@ -78,6 +90,16 @@ public class TurnManager : MonoBehaviour
     List<PlayerFlinger2D> GetCurrentTeam()
     {
         return currentTeamIndex == 0 ? teamPlayers : teamEnemy;
+    }
+
+    void ForceEnemyTurnEnd()
+    {
+        foreach (var penguin in GetCurrentTeam())
+        {
+            penguin.penguinHasMoved = true;
+            penguin.isActiveTurn = false;
+        }
+        EndTurn();
     }
 }
 

@@ -49,7 +49,6 @@ public class PlayerFlinger2D : MonoBehaviour
         line.enabled = false;
         rb.linearVelocity = GetLaunchVelocity();
         penguinHasMoved = true;
-        isActiveTurn = false;
         TurnManager.instance.CheckTurn(this);
 
     }
