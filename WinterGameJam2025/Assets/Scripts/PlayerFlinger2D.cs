@@ -5,10 +5,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerFlinger2D : MonoBehaviour
 {
-    public float velocityMultiplier = 5f;
-    public float maxVelocity = 12f;
+    public float velocityMultiplier;
+    public float maxVelocity;
     public float lineLengthMultiplier = 0.25f;
+    public float damage;
+    public float maxHealth;
+    public float health;
 
+    public GameObject player;
     private Rigidbody2D rb;
     private LineRenderer line;
 
@@ -21,6 +25,7 @@ public class PlayerFlinger2D : MonoBehaviour
 
     void Awake()
     {
+        SetStats();
         rb = GetComponent<Rigidbody2D>();
         line = GetComponent<LineRenderer>();
         line.enabled = false;
@@ -96,5 +101,14 @@ public class PlayerFlinger2D : MonoBehaviour
         isSelected = false;
         isDragging = false;
         line.enabled = false;
+    }
+
+    public void SetStats()
+    {
+        velocityMultiplier = player.GetComponent<Stats>().velocityMultiplier;
+        maxVelocity = player.GetComponent<Stats>().maxVelocity;
+        maxHealth = player.GetComponent<Stats>().maxHealth;
+        health = maxHealth;
+        damage = player.GetComponent<Stats>().damage;
     }
 }

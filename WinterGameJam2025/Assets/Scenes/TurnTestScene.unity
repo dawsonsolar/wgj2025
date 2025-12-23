@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &251175073 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5586220978330906373, guid: 73e24c8052b9abf49960f49487e0ff79, type: 3}
+  m_PrefabInstance: {fileID: 680523353}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &602408292
 GameObject:
   m_ObjectHideFlags: 0
@@ -246,6 +251,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1415919467665193199, guid: 73e24c8052b9abf49960f49487e0ff79, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 251175073}
     - target: {fileID: 1772037870863887829, guid: 73e24c8052b9abf49960f49487e0ff79, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.82
@@ -293,19 +302,39 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5586220978330906373, guid: 73e24c8052b9abf49960f49487e0ff79, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 680523355}
   m_SourcePrefab: {fileID: 100100000, guid: 73e24c8052b9abf49960f49487e0ff79, type: 3}
 --- !u!114 &680523354 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1415919467665193199, guid: 73e24c8052b9abf49960f49487e0ff79, type: 3}
   m_PrefabInstance: {fileID: 680523353}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 251175073}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07d312c8dbabe5449bf1c53f9e3943d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFlinger2D
+--- !u!114 &680523355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251175073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3776c09fcd252d24f9bf63fb46e58c56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stats
+  health: 0
+  maxVelocity: 12
+  velocityMultiplier: 5
+  maxHealth: 10
+  damage: 5
 --- !u!1 &891897155
 GameObject:
   m_ObjectHideFlags: 0
