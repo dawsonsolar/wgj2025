@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +15,10 @@ public class PlayerFlinger2D : MonoBehaviour
     private bool isSelected;
     private bool isDragging;
 
+    public bool penguinHasMoved = false;
+    public bool isActiveTurn = false;
+
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -26,20 +31,27 @@ public class PlayerFlinger2D : MonoBehaviour
 
     public void BeginDrag()
     {
-        if (rb.linearVelocity.magnitude > 0.05f)
+        if (!isActiveTurn || penguinHasMoved || rb.linearVelocity.magnitude > 0.05f)
+        {
             return;
+        }
 
         isDragging = true;
+        
     }
 
     public void Release()
     {
-        if (!isSelected || !isDragging)
+        if (!isSelected || !isDragging || !isActiveTurn || penguinHasMoved)
             return;
 
         isDragging = false;
         line.enabled = false;
         rb.linearVelocity = GetLaunchVelocity();
+        penguinHasMoved = true;
+        isActiveTurn = false;
+        TurnManager.instance.CheckTurn(this);
+
     }
 
     void Update()
