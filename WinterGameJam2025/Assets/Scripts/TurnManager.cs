@@ -11,6 +11,7 @@ public class TurnManager : MonoBehaviour
     public static TurnManager instance;
 
     private int currentTeamIndex = 1;
+    public int CurrentTeamIndex => currentTeamIndex;
 
     void Start()
     {
@@ -43,11 +44,14 @@ public class TurnManager : MonoBehaviour
 
     foreach(var p in GetCurrentTeam())
         {
+            if (p == null)
+                continue;
+
            if (!p.penguinHasMoved)
-            {
+           {
                allPenguinMoved = false;
                break;
-            }
+           }
 
         }
         if (allPenguinMoved)
@@ -101,5 +105,49 @@ public class TurnManager : MonoBehaviour
         }
         EndTurn();
     }
+
+    public void OnPenguinDied(PlayerFlinger2D penguin)
+    {
+        Debug.Log("Removing Penguin from list: " + penguin.name);
+        teamPlayers.Remove(penguin);
+        teamEnemy.Remove(penguin);
+
+        // if the penguin died before moving, mark it as moved.
+        CheckForImmediateTurnEnd();
+
+        if (teamPlayers.Count == 0)
+            Debug.Log("ENEMY WINS"); // future win/lose state here
+
+        if (teamEnemy.Count == 0)
+            Debug.Log("PLAYER WINS");
+    }
+
+    void CheckForImmediateTurnEnd()
+    {
+        List<PlayerFlinger2D> currentTeam = GetCurrentTeam();
+
+        if (currentTeam.Count == 0)
+        {
+            EndTurn();
+            return;
+        }
+
+        bool allMoved = true;
+
+        foreach (var p in currentTeam)
+        {
+            if (p != null && !p.penguinHasMoved)
+            {
+                allMoved = false;
+                break;
+            }
+        }
+
+        if (allMoved)
+        {
+            EndTurn();
+        }
+    }
+
 }
 

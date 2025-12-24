@@ -8,9 +8,8 @@ public class PlayerFlinger2D : MonoBehaviour
     public float velocityMultiplier;
     public float maxVelocity;
     public float lineLengthMultiplier = 0.25f;
-    public float damage;
-    public float maxHealth;
-    public float health;
+
+
 
     public GameObject player;
     private Rigidbody2D rb;
@@ -22,12 +21,23 @@ public class PlayerFlinger2D : MonoBehaviour
     public bool penguinHasMoved = false;
     public bool isActiveTurn = false;
 
+    private Stats stats;
+
+    public enum Team
+    {
+        Player,
+        Enemy
+    }
+
+    public Team team;
+
 
     void Awake()
-    {
-        SetStats();
+    {   
         rb = GetComponent<Rigidbody2D>();
         line = GetComponent<LineRenderer>();
+        stats = GetComponent<Stats>();
+
         line.enabled = false;
 
         rb.gravityScale = 0f;
@@ -82,6 +92,7 @@ public class PlayerFlinger2D : MonoBehaviour
         return Vector2.ClampMagnitude(velocity, maxVelocity);
     }
 
+    // Prediction Line
     void DrawLine()
     {
         Vector2 velocity = GetLaunchVelocity();
@@ -103,12 +114,43 @@ public class PlayerFlinger2D : MonoBehaviour
         line.enabled = false;
     }
 
-    public void SetStats()
+    bool ImmuneThisTurn()
     {
-        velocityMultiplier = player.GetComponent<Stats>().velocityMultiplier;
-        maxVelocity = player.GetComponent<Stats>().maxVelocity;
-        maxHealth = player.GetComponent<Stats>().maxHealth;
-        health = maxHealth;
-        damage = player.GetComponent<Stats>().damage;
+        if (TurnManager.instance == null)
+            return false;
+        if (team == Team.Player && TurnManager.instance.CurrentTeamIndex == 0)
+        {
+            Debug.Log($"{team} is immune this turn!");
+            return true;  
+        }
+            
+        if (team == Team.Enemy && TurnManager.instance.CurrentTeamIndex == 1)
+        {
+            Debug.Log($"{team} is immune this turn!");
+            return true;
+        }
+        return false;
+    }
+
+    //TAKING DAMAGE
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        PlayerFlinger2D other = collision.gameObject.GetComponent<PlayerFlinger2D>();
+        if (other == null)
+            return;
+        if (other.team == team) 
+            return;
+        // only apply damage if moving quick enough, adjust number if too high/low
+        if (rb.linearVelocity.magnitude < 0.5f)
+            return;
+
+        if (other.ImmuneThisTurn())
+            return;
+
+        Stats otherStats = other.GetComponent<Stats>();
+        if ((otherStats == null || stats == null))
+            return;
+
+        otherStats.TakeDamage(stats.damage);
     }
 }

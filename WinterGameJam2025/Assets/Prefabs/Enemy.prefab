@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1415919467665193199}
   - component: {fileID: 799697187500888266}
   m_Layer: 3
-  m_Name: Player
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -300,7 +300,7 @@ MonoBehaviour:
   player: {fileID: 5586220978330906373}
   penguinHasMoved: 0
   isActiveTurn: 0
-  team: 0
+  team: 1
 --- !u!114 &799697187500888266
 MonoBehaviour:
   m_ObjectHideFlags: 0
