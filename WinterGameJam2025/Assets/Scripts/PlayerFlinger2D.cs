@@ -1,3 +1,6 @@
+using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -64,7 +67,7 @@ public class PlayerFlinger2D : MonoBehaviour
         line.enabled = false;
         rb.linearVelocity = GetLaunchVelocity();
         penguinHasMoved = true;
-        TurnManager.instance.CheckTurn(this);
+        StartCoroutine(WaitForStopThenEndTurn());
 
     }
 
@@ -153,4 +156,15 @@ public class PlayerFlinger2D : MonoBehaviour
 
         otherStats.TakeDamage(stats.damage);
     }
+
+    IEnumerator WaitForStopThenEndTurn()
+    {
+        // Wait until physics settles
+        yield return new WaitUntil(() => rb.linearVelocity.sqrMagnitude < 0.01f);
+
+        rb.linearVelocity = Vector2.zero;
+
+        TurnManager.instance.CheckTurn(this);
+    }
+
 }

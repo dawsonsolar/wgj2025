@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1813993772649532662}
   - component: {fileID: 1415919467665193199}
   - component: {fileID: 799697187500888266}
+  - component: {fileID: -8802452894188973389}
   m_Layer: 3
   m_Name: Enemy
   m_TagString: Untagged
@@ -318,3 +319,16 @@ MonoBehaviour:
   velocityMultiplier: 5
   maxHealth: 100
   damage: 10
+--- !u!114 &-8802452894188973389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5586220978330906373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c2f77846f2fa9e4693b4583415ddb05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  thinkDelay: 2

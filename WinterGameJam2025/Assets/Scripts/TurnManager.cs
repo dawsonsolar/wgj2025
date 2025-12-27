@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class TurnManager : MonoBehaviour
     public List<PlayerFlinger2D> teamEnemy;
     public static TurnManager instance;
 
-    private int currentTeamIndex = 1;
+    private int currentTeamIndex = 0;
     public int CurrentTeamIndex => currentTeamIndex;
 
     void Start()
@@ -64,20 +65,25 @@ public class TurnManager : MonoBehaviour
     public void StartTurn()
     {
         Debug.Log("Start Turn For Team " + currentTeamIndex);
+
         List<PlayerFlinger2D> currentTeam = GetCurrentTeam();
+
         foreach (var penguin in currentTeam)
         {
+            if (penguin == null)
+                continue;
+
             penguin.penguinHasMoved = false;
             penguin.isActiveTurn = true;
         }
 
         if (currentTeamIndex == 1)
         {
-           //TODO: Enemy AI
+            StartCoroutine(EnemyTurnSequence());
         }
-
-        
     }
+
+
 
     public void EndTurn()
     {
@@ -148,6 +154,25 @@ public class TurnManager : MonoBehaviour
             EndTurn();
         }
     }
+
+    IEnumerator EnemyTurnSequence()
+    {
+        foreach (var penguin in teamEnemy)
+        {
+            if (penguin == null)
+                continue;
+
+            EnemyAI ai = penguin.GetComponent<EnemyAI>();
+            if (ai == null)
+                continue;
+
+            yield return StartCoroutine(ai.TakeTurn());
+
+            // small delay between enemies
+            yield return new WaitForSeconds(0.4f);
+        }
+    }
+
 
 }
 
