@@ -314,7 +314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stats
   currentHealth: 0
-  maxVelocity: 12
+  maxVelocity: 15
   velocityMultiplier: 5
   maxHealth: 100
   damage: 10

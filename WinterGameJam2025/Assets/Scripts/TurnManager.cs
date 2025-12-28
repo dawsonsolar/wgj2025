@@ -10,6 +10,8 @@ public class TurnManager : MonoBehaviour
     public List<PlayerFlinger2D> teamPlayers;
     public List<PlayerFlinger2D> teamEnemy;
     public static TurnManager instance;
+    private Coroutine enemyTurnCoroutine;
+
 
     private int currentTeamIndex = 0;
     public int CurrentTeamIndex => currentTeamIndex;
@@ -79,7 +81,7 @@ public class TurnManager : MonoBehaviour
 
         if (currentTeamIndex == 1)
         {
-            StartCoroutine(EnemyTurnSequence());
+            enemyTurnCoroutine = StartCoroutine(EnemyTurnSequence());
         }
     }
 
@@ -88,14 +90,23 @@ public class TurnManager : MonoBehaviour
     public void EndTurn()
     {
         Debug.Log("End Turn For Team " + currentTeamIndex);
+
+        if (enemyTurnCoroutine != null)
+        {
+            StopCoroutine(enemyTurnCoroutine);
+            enemyTurnCoroutine = null;
+        }
+
         foreach (var penguin in GetCurrentTeam())
         {
-            penguin.isActiveTurn = false;
-            
+            if (penguin != null)
+                penguin.isActiveTurn = false;
         }
+
         currentTeamIndex = 1 - currentTeamIndex;
         StartTurn();
     }
+
 
     List<PlayerFlinger2D> GetCurrentTeam()
     {
@@ -104,13 +115,18 @@ public class TurnManager : MonoBehaviour
 
     void ForceEnemyTurnEnd()
     {
-        foreach (var penguin in GetCurrentTeam())
+        if (currentTeamIndex != 1)
+            return;
+
+        if (enemyTurnCoroutine != null)
         {
-            penguin.penguinHasMoved = true;
-            penguin.isActiveTurn = false;
+            StopCoroutine(enemyTurnCoroutine);
+            enemyTurnCoroutine = null;
         }
+
         EndTurn();
     }
+
 
     public void OnPenguinDied(PlayerFlinger2D penguin)
     {
@@ -157,21 +173,30 @@ public class TurnManager : MonoBehaviour
 
     IEnumerator EnemyTurnSequence()
     {
-        foreach (var penguin in teamEnemy)
+        foreach (var penguin in teamEnemy.ToArray()) // snapshot for safety
         {
+            if (currentTeamIndex != 1)
+                yield break;
+
             if (penguin == null)
                 continue;
 
             EnemyAI ai = penguin.GetComponent<EnemyAI>();
-            if (ai == null)
+            if (ai == null || ai.IsDead)
                 continue;
 
             yield return StartCoroutine(ai.TakeTurn());
 
-            // small delay between enemies
             yield return new WaitForSeconds(0.4f);
         }
+
+        // SAFETY: ensure turn ends even if enemies died mid-turn
+        if (currentTeamIndex == 1)
+        {
+            EndTurn();
+        }
     }
+
 
 
 }

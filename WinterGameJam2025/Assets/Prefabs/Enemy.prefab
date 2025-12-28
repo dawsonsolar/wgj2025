@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stats
   currentHealth: 0
-  maxVelocity: 12
+  maxVelocity: 15
   velocityMultiplier: 5
   maxHealth: 100
   damage: 10
@@ -332,3 +332,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   thinkDelay: 2
+  aimErrorDegrees: 7
+  maxAimAttempts: 12
+  dangerCheckDistance: 4
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  killZoneMask:
+    serializedVersion: 2
+    m_Bits: 128

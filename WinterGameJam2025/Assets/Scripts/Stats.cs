@@ -9,6 +9,7 @@ public class Stats : MonoBehaviour
     public int damage = 10;
 
 
+
     void Awake()
     {
         currentHealth = maxHealth;
@@ -30,6 +31,15 @@ public class Stats : MonoBehaviour
     public void Die()
     {
         Debug.Log($"{name} died!");
+
+        // Mark AI as dead so coroutines can exit safely
+        EnemyAI ai = GetComponent<EnemyAI>();
+        if (ai != null)
+        {
+            ai.IsDead = true;
+            ai.StopAllCoroutines();
+        }
+
         PlayerFlinger2D penguin = GetComponent<PlayerFlinger2D>();
         if (penguin != null && TurnManager.instance != null)
         {
@@ -37,5 +47,5 @@ public class Stats : MonoBehaviour
         }
 
         Destroy(gameObject);
-    }    
+    }
 }
