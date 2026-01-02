@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(PlayerFlinger2D))]
 public class EnemyAI : MonoBehaviour
@@ -8,11 +9,13 @@ public class EnemyAI : MonoBehaviour
     public float aimErrorDegrees = 7f;
     public int maxAimAttempts = 12;
     public float dangerCheckDistance = 4f;
+    public int maxVisitedGaps = 7;
     public LayerMask obstacleMask;   // walls
     public LayerMask killZoneMask;    // kill zones
 
     private PlayerFlinger2D flinger;
     private Rigidbody2D rb;
+    private HashSet<Transform> visitedPaths = new HashSet<Transform>();
 
     public bool IsDead { get; set; }
 
@@ -46,11 +49,15 @@ public class EnemyAI : MonoBehaviour
         Vector2 goalPos = target.transform.position;
 
         // If direct path is blocked, aim for a gap instead
-        if (PathIsDangerous((goalPos - rb.position).normalized))
+        Vector2 dirToTarget = (goalPos - rb.position).normalized;
+
+        if (!HasLineOfSight(rb.position, goalPos) || PathIsDangerous(dirToTarget))
         {
-            Transform gap = FindBestGap();
+            Transform gap = FindBestGapWithLOS(goalPos);
+
             if (gap != null)
             {
+                MarkGapVisited(gap);
                 goalPos = gap.position;
             }
         }
@@ -93,8 +100,28 @@ public class EnemyAI : MonoBehaviour
     // Pick a safe launch vector
     Vector2 ComputeSafeVelocity(Vector2 targetPos)
     {
-        Vector2 baseDir = (targetPos - (Vector2)transform.position).normalized;
+        Vector2 direction = (targetPos - (Vector2)transform.position);
+        Vector2 baseDir = direction.normalized;
 
+        // Check if path to player is completely clear
+        bool hasLineOfSight = !PathIsDangerous(baseDir);
+
+        float finalSpeed;
+
+        if (hasLineOfSight)
+        {
+            // Ram the player at max velocity
+            finalSpeed = flinger.maxVelocity;
+        }
+        else
+        {
+            // Path is blocked, scale velocity based on distance to the target (gap or marker)
+            float distance = direction.magnitude;
+            float desiredSpeed = distance * 1.2f; // tweak multiplier to slightly overshoot
+            finalSpeed = Mathf.Min(desiredSpeed, flinger.maxVelocity);
+        }
+
+        // Try multiple angles for randomness / obstacle avoidance
         for (int i = 0; i < maxAimAttempts; i++)
         {
             float spread = aimErrorDegrees + i * 5f;
@@ -104,15 +131,14 @@ public class EnemyAI : MonoBehaviour
 
             if (!PathIsDangerous(testDir))
             {
-                Vector2 velocity = testDir * flinger.velocityMultiplier;
-                return Vector2.ClampMagnitude(velocity, flinger.maxVelocity);
+                return testDir * finalSpeed;
             }
         }
 
-        // fallback (still imperfect on purpose)
-        Vector2 fallback = baseDir * flinger.velocityMultiplier;
-        return Vector2.ClampMagnitude(fallback, flinger.maxVelocity);
+        // fallback (even if all angles are blocked, still fling in base direction)
+        return baseDir * finalSpeed;
     }
+
 
 
 
@@ -147,25 +173,70 @@ public class EnemyAI : MonoBehaviour
         return hitKill.collider != null;
     }
 
-    Transform FindBestGap()
+    Transform FindBestGapWithLOS(Vector2 playerPos)
     {
         GameObject[] gaps = GameObject.FindGameObjectsWithTag("AIGap");
 
         Transform best = null;
-        float bestDist = float.MaxValue;
+        float bestScore = float.MinValue;
 
         foreach (var g in gaps)
         {
-            float d = Vector2.Distance(transform.position, g.transform.position);
-            if (d < bestDist)
+            Transform gap = g.transform;
+
+            if (visitedPaths.Contains(gap))
+                continue;
+
+            bool seesPlayer = HasLineOfSight(gap.position, playerPos);
+            float distToPlayer = Vector2.Distance(gap.position, playerPos);
+            float distFromEnemy = Vector2.Distance(transform.position, gap.position);
+
+            // Score system
+            float score = 0f;
+
+            if (seesPlayer)
+                score += 1000f; // HUGE priority
+
+            score -= distToPlayer * 2f;
+            score -= distFromEnemy;
+
+            if (score > bestScore)
             {
-                bestDist = d;
-                best = g.transform;
+                bestScore = score;
+                best = gap;
             }
         }
 
         return best;
     }
 
+
+    void MarkGapVisited(Transform gap)
+    {
+        if (gap == null) 
+            return;
+
+        visitedPaths.Add(gap);
+
+        if (visitedPaths.Count >= maxVisitedGaps)
+        {
+            visitedPaths.Clear();
+        }
+    }
+
+    bool HasLineOfSight(Vector2 from, Vector2 to)
+    {
+        Vector2 dir = (to - from).normalized;
+        float dist = Vector2.Distance(from, to);
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            from,
+            dir,
+            dist,
+            obstacleMask
+        );
+
+        return hit.collider == null;
+    }
 
 }

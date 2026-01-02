@@ -88,7 +88,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFlinger2D
   velocityMultiplier: 6
-  maxVelocity: 15
+  maxVelocity: 35
   lineLengthMultiplier: 0.25
   player: {fileID: 5586220978330906373}
   penguinHasMoved: 0
@@ -315,10 +315,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stats
   currentHealth: 0
-  maxVelocity: 15
-  velocityMultiplier: 5
+  maxVelocity: 35
+  velocityMultiplier: 6
   maxHealth: 100
   damage: 10
+  healthBarPrefab: {fileID: 0}
 --- !u!114 &-8802452894188973389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,6 +336,7 @@ MonoBehaviour:
   aimErrorDegrees: 7
   maxAimAttempts: 12
   dangerCheckDistance: 4
+  maxVisitedGaps: 2
   obstacleMask:
     serializedVersion: 2
     m_Bits: 64
