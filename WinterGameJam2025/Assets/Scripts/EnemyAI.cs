@@ -42,38 +42,40 @@ public class EnemyAI : MonoBehaviour
         if (target == null)
         {
             flinger.penguinHasMoved = true;
-            TurnManager.instance.CheckTurn(flinger);
+            TurnManager.instance?.CheckTurn(flinger);
             yield break;
         }
 
         Vector2 goalPos = target.transform.position;
 
-        // If direct path is blocked, aim for a gap instead
-        Vector2 dirToTarget = (goalPos - rb.position).normalized;
-
-        if (!HasLineOfSight(rb.position, goalPos) || PathIsDangerous(dirToTarget))
+        // If path blocked, aim for gap
+        if (PathIsDangerous((goalPos - rb.position).normalized))
         {
             Transform gap = FindBestGapWithLOS(goalPos);
-
             if (gap != null)
-            {
-                MarkGapVisited(gap);
                 goalPos = gap.position;
-            }
         }
+
         Debug.DrawLine(rb.position, goalPos, Color.green, 1.5f);
         Vector2 launchVelocity = ComputeSafeVelocity(goalPos);
 
-
-        rb.linearVelocity = launchVelocity;
+        // Clamp linear velocity
+        rb.linearVelocity = Vector2.ClampMagnitude(launchVelocity, flinger.maxVelocity);
         flinger.penguinHasMoved = true;
 
-        yield return new WaitUntil(() => rb.linearVelocity.sqrMagnitude < 0.01f);
-        if (IsDead || this == null) 
+        // Wait for movement to stop or object to die
+        yield return new WaitUntil(() =>
+            this != null &&
+            rb != null &&
+            rb.linearVelocity.sqrMagnitude < 0.01f
+        );
+
+        if (this == null || rb == null)
             yield break;
+
         rb.linearVelocity = Vector2.zero;
 
-        TurnManager.instance.CheckTurn(flinger);
+        TurnManager.instance?.CheckTurn(flinger);
     }
 
     // Find nearest opposing penguin

@@ -81,9 +81,20 @@ public class PlayerFlinger2D : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDragging && rb.linearVelocity.sqrMagnitude < 0.01f)
-            rb.linearVelocity = Vector2.zero;
+        if (!isDragging)
+        {
+            // Clamp linear velocity
+            if (rb.linearVelocity.magnitude > maxVelocity)
+            {
+                rb.linearVelocity = rb.linearVelocity.normalized * maxVelocity;
+            }
+
+            // Stop almost-stopped objects
+            if (rb.linearVelocity.sqrMagnitude < 0.01f)
+                rb.linearVelocity = Vector2.zero;
+        }
     }
+
 
     Vector2 GetLaunchVelocity()
     {
@@ -159,12 +170,20 @@ public class PlayerFlinger2D : MonoBehaviour
 
     IEnumerator WaitForStopThenEndTurn()
     {
-        // Wait until physics settles
-        yield return new WaitUntil(() => rb.linearVelocity.sqrMagnitude < 0.01f);
+        // Wait until physics settles or object is destroyed
+        yield return new WaitUntil(() =>
+            this != null &&
+            rb != null &&
+            rb.linearVelocity.sqrMagnitude < 0.01f
+        );
+
+        if (this == null || rb == null)
+            yield break;
 
         rb.linearVelocity = Vector2.zero;
 
-        TurnManager.instance.CheckTurn(this);
+        if (TurnManager.instance != null)
+            TurnManager.instance.CheckTurn(this);
     }
 
 }

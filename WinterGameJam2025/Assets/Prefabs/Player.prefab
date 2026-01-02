@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1813993772649532662}
   - component: {fileID: 1415919467665193199}
   - component: {fileID: 799697187500888266}
+  - component: {fileID: -6362035993882058441}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -158,7 +159,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 2
 --- !u!120 &1813993772649532662
 LineRenderer:
   serializedVersion: 3
@@ -319,3 +320,21 @@ MonoBehaviour:
   maxHealth: 100
   damage: 10
   healthBarPrefab: {fileID: 0}
+--- !u!114 &-6362035993882058441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5586220978330906373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3328547c1f4723c4da846f3eb744205c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PenguinSpriteController
+  upSprite: {fileID: -6021379043237867509, guid: d50b9d71d9fb81540b5cbf7ac4d40d70, type: 3}
+  downSprite: {fileID: 5455063242140992646, guid: 38df88dddead88f4b94235e17282471d, type: 3}
+  rightSprite: {fileID: 6295230341156814381, guid: 9532c3925963c2c439a7c185f5f93ddf, type: 3}
+  uprightSprite: {fileID: -5685313576129682439, guid: 0283c2daf34552f4c885d1085ef24f6b, type: 3}
+  downrightSprite: {fileID: 5528993054232901978, guid: 1c90cd8ae9fc46c4095aaf0cc8575811, type: 3}
+  slideSprite: {fileID: -6021379043237867509, guid: d50b9d71d9fb81540b5cbf7ac4d40d70, type: 3}
