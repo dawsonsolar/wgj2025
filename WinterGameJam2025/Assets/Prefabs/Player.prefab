@@ -297,7 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFlinger2D
   velocityMultiplier: 6
   maxVelocity: 35
-  lineLengthMultiplier: 0.25
+  lineLengthMultiplier: 0.5
   player: {fileID: 5586220978330906373}
   penguinHasMoved: 0
   isActiveTurn: 0

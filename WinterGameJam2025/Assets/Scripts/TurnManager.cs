@@ -68,6 +68,18 @@ public class TurnManager : MonoBehaviour
     {
         Debug.Log("Start Turn For Team " + currentTeamIndex);
 
+        if (GameUIController.instance != null)
+        {
+            if (currentTeamIndex == 0)
+            {
+                GameUIController.instance.ShowTurnText("Player's Turn!");
+            }
+            else
+            {
+                GameUIController.instance.ShowTurnText("Enemies Turn!");
+            }
+        }
+
         List<PlayerFlinger2D> currentTeam = GetCurrentTeam();
 
         foreach (var penguin in currentTeam)
@@ -138,10 +150,17 @@ public class TurnManager : MonoBehaviour
         CheckForImmediateTurnEnd();
 
         if (teamPlayers.Count == 0)
+        {
             Debug.Log("ENEMY WINS"); // future win/lose state here
-
+            GameUIController.instance?.ShowLoss();
+            enabled = false;
+        }
         if (teamEnemy.Count == 0)
+        {
             Debug.Log("PLAYER WINS");
+            GameUIController.instance?.ShowWin();
+            enabled = false;
+        }
     }
 
     void CheckForImmediateTurnEnd()

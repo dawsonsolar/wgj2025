@@ -49,10 +49,11 @@ public class PlayerFlinger2D : MonoBehaviour
 
     public void BeginDrag()
     {
-        if (!isActiveTurn || penguinHasMoved || rb.linearVelocity.magnitude > 0.05f)
-        {
+        if (PauseMenu.instance != null && PauseMenu.instance.IsPaused)
             return;
-        }
+
+        if (!isActiveTurn || penguinHasMoved || rb.linearVelocity.magnitude > 0.05f)
+            return;   
 
         isDragging = true;
         
