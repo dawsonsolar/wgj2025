@@ -59,5 +59,6 @@ public class GameUIController : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+
 }
 
