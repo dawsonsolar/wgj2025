@@ -46,19 +46,11 @@ public class EnemyAI : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    // =========================================================================
-    // Public entry point (called by TurnManager)
-    // =========================================================================
-
     public IEnumerator TakeTurn()
     {
         if (IsDead || this == null) yield break;
         yield return AISequence();
     }
-
-    // =========================================================================
-    // Main AI coroutine
-    // =========================================================================
 
     IEnumerator AISequence()
     {
@@ -93,14 +85,6 @@ public class EnemyAI : MonoBehaviour
         TurnManager.instance?.CheckTurn(flinger);
     }
 
-    // =========================================================================
-    // Goal selection — direct shot, gap waypoint, or fallback
-    // =========================================================================
-
-    /// <summary>
-    /// Returns the world position the AI should aim at this turn.
-    /// Tries direct shot first, then optional AIGap waypoints, then fallback.
-    /// </summary>
     Vector2 DecideGoal(Vector2 targetPos)
     {
         Vector2 myPos = rb.position;
@@ -134,10 +118,6 @@ public class EnemyAI : MonoBehaviour
         // 4. No clear path at all — aim directly and let the sweep try 
         return targetPos;
     }
-
-    // =========================================================================
-    // AIGap helpers
-    // =========================================================================
 
     Transform FindBestReachableGap(Vector2 targetPos)
     {
@@ -206,15 +186,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // =========================================================================
-    // Path / reachability checks
-    // =========================================================================
-
-    /// <summary>
-    /// Full-path check: can a penguin-sized body travel from <from> to <to>
-    /// without hitting a wall or kill zone? Checks the entire distance, not just
-    /// a fixed look-ahead.
-    /// </summary>
     bool CanReach(Vector2 from, Vector2 to)
     {
         Vector2 dir = (to - from).normalized;
@@ -226,21 +197,12 @@ public class EnemyAI : MonoBehaviour
         return !wallHit && !killHit;
     }
 
-    /// <summary>
-    /// Short look-ahead check used during launch direction sweep.
-    /// Only checks a few units ahead so the AI doesn't refuse to fire along
-    /// corridors that are open at launch but close later.
-    /// </summary>
     bool IsLaunchDirectionBlocked(Vector2 from, Vector2 dir)
     {
         bool wallHit = Physics2D.CircleCast(from, penguinRadius, dir, launchLookAhead, obstacleMask).collider != null;
         bool killHit = Physics2D.CircleCast(from, penguinRadius, dir, launchLookAhead, killZoneMask).collider != null;
         return wallHit || killHit;
     }
-
-    // =========================================================================
-    // Launch velocity calculation
-    // =========================================================================
 
     Vector2 ComputeLaunchVelocity(Vector2 goalPos, bool isWaypoint)
     {
@@ -284,10 +246,6 @@ public class EnemyAI : MonoBehaviour
         Debug.DrawRay(myPos, baseDir * 2f, Color.red, 1.5f);
         return baseDir * speed;
     }
-
-    // =========================================================================
-    // Utility
-    // =========================================================================
 
     PlayerFlinger2D FindNearestEnemy()
     {
