@@ -20,5 +20,15 @@ public class PlayerSelectionManager2D : MonoBehaviour
         current.Select();
     }
 
-
+    /// <summary>
+    /// Deselects the currently selected penguin (e.g. when the player clicks an item instead).
+    /// </summary>
+    public void Deselect()
+    {
+        if (current != null)
+        {
+            current.Deselect();
+            current = null;
+        }
+    }
 }
