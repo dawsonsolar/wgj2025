@@ -80,4 +80,3 @@ The game includes five playable levels, each with a different ice arena layout, 
 | `HealthBarUI` | World-space health bar that follows a penguin and fades after taking damage |
 | `GameUIController` | Displays turn announcements and win/loss screen |
 | `PauseMenu` | Handles in-game pause, resume, and returning to the title screen |
-| `BGmusic` | Persistent background music manager that survives scene loads |
