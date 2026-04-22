@@ -154,7 +154,8 @@ public class PlayerFlinger2D : MonoBehaviour
         if (item != null)
         {
             Vector2 velocity = ComputeVelocityToward(mouseWorld, item.maxThrowSpeed);
-            item.LaunchImmediately(velocity);
+            // Pass this penguin's collider so the item ignores only its owner, not enemies
+            item.LaunchImmediately(velocity, penguinCol);
         }
 
         heldItemPrefab = null;

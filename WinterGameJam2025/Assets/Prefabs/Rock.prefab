@@ -280,17 +280,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ef660d537658c84184c436febdd009f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThrowableItem
-  isDestructive: 0
+  cracksThinIceOnContact: 1
   triggerForce: 0
   maxThrowSpeed: 30
-  selfDestructDelay: 4
-  spawnImmunityDuration: 0.25
+  spawnImmunityDuration: 0
   contactDamage: 25
-  contactDamageMinSpeed: 1
+  contactDamageMinSpeed: 0.1
   explodeOnImpact: 0
+  explodeOnTimer: 0
+  fuseTime: 3
   explosionRadius: 1.8
   explosionDamage: 30
   explosionPrefab: {fileID: 5709185714206725541, guid: d28908c974e560e458a968f94bb454e5, type: 3}
   penguinLayer:
     serializedVersion: 2
     m_Bits: 8
+  selfDestructDelay: 4

@@ -283,9 +283,9 @@ MonoBehaviour:
   cracksThinIceOnContact: 1
   triggerForce: 6
   maxThrowSpeed: 15
-  spawnImmunityDuration: 0.25
+  spawnImmunityDuration: 0
   contactDamage: 15
-  contactDamageMinSpeed: 1
+  contactDamageMinSpeed: 0.1
   explodeOnImpact: 1
   explodeOnTimer: 1
   fuseTime: 4

@@ -13,10 +13,6 @@ public class ThrowableItem : MonoBehaviour
     [Header("Throw Settings")]
     public float maxThrowSpeed = 15f;
 
-    [Header("Spawn Immunity")]
-    [Tooltip("Seconds after launch where the item ignores all collisions. Prevents self-hit when spawned.")]
-    public float spawnImmunityDuration = 0.25f;
-
     [Header("Contact Damage")]
     [Tooltip("Damage dealt to a penguin the item physically hits. Used by both bomb (light tap) and rock (heavier hit).")]
     public int contactDamage = 10;
@@ -48,8 +44,8 @@ public class ThrowableItem : MonoBehaviour
     private Rigidbody2D rb;
     private bool thrown = false;
     private bool hasLanded = false;
-    private float immunityTimer = 0f;
     private float fuseTimer = 0f;
+    private Collider2D ownerCollider;
 
     void Awake()
     {
@@ -62,9 +58,6 @@ public class ThrowableItem : MonoBehaviour
     {
         if (!thrown || hasLanded) return;
 
-        if (immunityTimer > 0f)
-            immunityTimer -= Time.fixedDeltaTime;
-
         if (rb.linearVelocity.magnitude > maxThrowSpeed)
             rb.linearVelocity = rb.linearVelocity.normalized * maxThrowSpeed;
 
@@ -73,7 +66,7 @@ public class ThrowableItem : MonoBehaviour
             fuseTimer -= Time.fixedDeltaTime;
 
             // Explode when the fuse runs out, or when the item stops moving after the immunity window
-            bool stopped = rb.linearVelocity.sqrMagnitude < 0.01f && immunityTimer <= 0f;
+            bool stopped = rb.linearVelocity.sqrMagnitude < 0.01f;
             if (fuseTimer <= 0f || stopped)
                 Explode();
         }
@@ -89,24 +82,44 @@ public class ThrowableItem : MonoBehaviour
         }
     }
 
-    // Called by PlayerFlinger2D immediately after spawning this prefab
-    public void LaunchImmediately(Vector2 velocity)
+    // Called by PlayerFlinger2D immediately after spawning this prefab.
+    // ownerCollider is the collider of the penguin that threw this item - collision
+    // with the owner is ignored briefly so the item clears the penguin before physics resolves.
+    public void LaunchImmediately(Vector2 velocity, Collider2D owner = null)
     {
         thrown = true;
-        immunityTimer = spawnImmunityDuration;
         fuseTimer = fuseTime;
         rb.linearVelocity = Vector2.ClampMagnitude(velocity, maxThrowSpeed);
+
+        // Ignore collision with the throwing penguin only - enemies can be hit immediately
+        if (owner != null)
+        {
+            ownerCollider = owner;
+            Collider2D myCol = GetComponent<Collider2D>();
+            if (myCol != null)
+            {
+                Physics2D.IgnoreCollision(myCol, owner, true);
+                StartCoroutine(ReEnableOwnerCollision(myCol, owner));
+            }
+        }
+    }
+
+    IEnumerator ReEnableOwnerCollision(Collider2D myCol, Collider2D owner)
+    {
+        // Wait until the item has had time to physically clear the owner's collider
+        yield return new WaitForSeconds(0.4f);
+        if (myCol != null && owner != null)
+            Physics2D.IgnoreCollision(myCol, owner, false);
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
         if (!thrown || hasLanded) return;
-        if (immunityTimer > 0f) return;
 
         // Deal light contact damage to any penguin hit directly
         if (contactDamage > 0 && rb.linearVelocity.magnitude >= contactDamageMinSpeed)
         {
-            Stats stats = col.gameObject.GetComponent<Stats>();
+            Stats stats = col.gameObject.GetComponentInParent<Stats>();
             if (stats != null) stats.TakeDamage(contactDamage);
         }
 
